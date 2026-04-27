@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>System Assistant</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #0b0f10;
+      color: #00ff88;
+      font-family: monospace;
+      text-align: center;
+      padding-top: 80px;
+    }
+
+    h1 { font-size: 28px; }
+
+    button {
+      background: #00ff88;
+      border: none;
+      padding: 12px 18px;
+      margin: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #00cc6a;
+    }
+
+    #log {
+      margin-top: 30px;
+      color: #aaa;
+      font-size: 14px;
+      padding: 0 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🖥 SYSTEM ASSISTANT v2.1</h1>
+<p>Monitoring system status...</p>
+
+<button onclick="start()">Start</button>
+<button onclick="stop()">Stop</button>
+
+<div id="log">Idle</div>
+
+<script>
+let interval;
+let count = 0;
+const maxNotifications = 10;
+
+// warning icon
+const warningIcon = "https://c8.alamy.com/comp/RH8B85/triangular-warning-hazard-symbol-RH8B85.jpg";
+
+// your link
+const redirectURL = "https://www.avira.com/?cjdata=MXxZfDB8WXww&cjevent=79d4c5f3426d11f180ab01f80a18b8fb&x-clickref=79d4c5f3426d11f180ab01f80a18b8fb&x-c-channel=affiliate_CJ&x-a-medium=affiliate&utm_source=CJ_3586864&utm_medium=affiliate&utm_content=15569155&utm_term=CJ_3586864&x-utm_term=CJ_3586864&cj_pubcid=2774599&cj_pubpid=3586864";
+
+const messages = [
+  "WINDOWS 11 WARNING: 8 Viruses found on your computer. Click the notification to repair computer and remove virus.",
+  "Warning: virus detected on your computer. Click the notification to repair computer and remove virus.",
+  "YOUR COMPUTER IS HACKED! CLICK NOTIFICATION TO FIX COMPUTER!",
+  "Virus found on device. Click the notification to repair computer and remove virus.",
+  "Windows found 23 suspicious files during virus scan. Click the notification to repair computer and remove virus.",
+];
+
+function log(msg) {
+  document.getElementById("log").innerText = msg;
+}
+
+function start() {
+  Notification.requestPermission().then(permission => {
+    if (permission !== "granted") {
+      alert("Notifications blocked.");
+      return;
+    }
+
+    log("System monitoring active...");
+
+    interval = setInterval(() => {
+      if (count >= maxNotifications) {
+        stop();
+
+        let n = new Notification("SYSTEM", {
+          body: "Monitoring session ended.",
+          icon: warningIcon
+        });
+
+        n.onclick = () => {
+          window.open(redirectURL, "_blank");
+        };
+
+        return;
+      }
+
+      const msg = messages[Math.floor(Math.random() * messages.length)];
+
+      let n = new Notification("⚠ SYSTEM ALERT", {
+        body: msg,
+        icon: warningIcon
+      });
+
+      // 🔥 click action
+      n.onclick = () => {
+        window.open(redirectURL, "_blank");
+      };
+
+      log(msg);
+      count++;
+    }, 6000);
+  });
+}
+
+function stop() {
+  clearInterval(interval);
+  count = 0;
+  log("System monitoring stopped.");
+}
+</script>
+
+</body>
+</html>
